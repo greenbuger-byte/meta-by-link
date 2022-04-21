@@ -45,6 +45,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
 exports.__esModule = true;
 var node_html_parser_1 = require("node-html-parser");
 var node_fetch_1 = require("node-fetch");
+var parseRules_1 = require("./parseRules");
 function read(body) {
     return __awaiter(this, void 0, void 0, function () {
         var _this = this;
@@ -92,7 +93,7 @@ function read(body) {
                             case 11: return [7 /*endfinally*/];
                             case 12: return [3 /*break*/, 14];
                             case 13:
-                                reject('<head></head>');
+                                reject('<head />');
                                 _b.label = 14;
                             case 14: return [2 /*return*/];
                         }
@@ -116,17 +117,36 @@ function getParse(url) {
     });
 }
 var testUrl = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var head, dom;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4 /*yield*/, getParse(url)];
+    var metaData, head, dom, _i, _a, prop, _b, _c, rule, query, searchRule, foundedElement;
+    var _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                metaData = {
+                    title: ''
+                };
+                return [4 /*yield*/, getParse(url)];
             case 1:
-                head = _b.sent();
+                head = _e.sent();
+                console.log(head);
                 dom = (0, node_html_parser_1.parse)(head);
-                console.log((_a = dom.querySelector('title')) === null || _a === void 0 ? void 0 : _a.text);
-                return [2 /*return*/];
+                for (_i = 0, _a = Object.keys(parseRules_1["default"]); _i < _a.length; _i++) {
+                    prop = _a[_i];
+                    if (prop) {
+                        for (_b = 0, _c = parseRules_1["default"][prop]; _b < _c.length; _b++) {
+                            rule = _c[_b];
+                            query = rule[0], searchRule = rule[1];
+                            console.log('sdfdsf');
+                            foundedElement = dom.querySelector(query);
+                            if (foundedElement) {
+                                metaData[prop] = searchRule(foundedElement);
+                            }
+                        }
+                    }
+                }
+                console.log((_d = dom.querySelector('title')) === null || _d === void 0 ? void 0 : _d.text);
+                return [2 /*return*/, metaData];
         }
     });
 }); };
-testUrl('https://vk.com');
+testUrl('https://vk.com').then(function (r) { return console.log(r); });
